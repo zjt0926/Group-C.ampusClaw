@@ -1,0 +1,82 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: campusclaw
+      POSTGRES_PASSWORD: campusclaw
+      POSTGRES_DB: campusclaw
+    volumes:
+      - campusclaw_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U campusclaw -d campusclaw"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - campusclaw_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  web:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg2://campusclaw:campusclaw@db:5432/campusclaw
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-campusclaw-demo-jwt-secret-change-me}
+      SECRET_KEY: ${SECRET_KEY:-campusclaw-demo-secret-change-me}
+      COOKIE_SECURE: ${COOKIE_SECURE:-0}
+      AI_GATEWAY_BASE_URL: ${AI_GATEWAY_BASE_URL:-}
+      AI_GATEWAY_API_KEY: ${AI_GATEWAY_API_KEY:-}
+      AI_GATEWAY_MODEL: ${AI_GATEWAY_MODEL:-gpt-4o-mini}
+      AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-90}
+      PASS_SCORE: ${PASS_SCORE:-60}
+      RUN_MIGRATIONS: "1"
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  worker:
+    build: .
+    command: ["celery", "-A", "app.tasks.celery_app", "worker", "--loglevel=info", "--concurrency=2"]
+    environment:
+      DATABASE_URL: postgresql+psycopg2://campusclaw:campusclaw@db:5432/campusclaw
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-campusclaw-demo-jwt-secret-change-me}
+      SECRET_KEY: ${SECRET_KEY:-campusclaw-demo-secret-change-me}
+      AI_GATEWAY_BASE_URL: ${AI_GATEWAY_BASE_URL:-}
+      AI_GATEWAY_API_KEY: ${AI_GATEWAY_API_KEY:-}
+      AI_GATEWAY_MODEL: ${AI_GATEWAY_MODEL:-gpt-4o-mini}
+      AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-90}
+      PASS_SCORE: ${PASS_SCORE:-60}
+      RUN_MIGRATIONS: "0"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  campusclaw_pgdata:
+  campusclaw_redisdata:

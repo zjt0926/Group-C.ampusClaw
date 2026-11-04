@@ -78,3 +78,70 @@ CampusClaw 是一个面向高中班级的 AI 学科助手系统：
 - 提示词与文档细节：见组内飞书文档（链接在群公告/任务评论里）
 - 提交信息格式：`feat: xxx` / `fix: xxx` / `docs: xxx` / `chore: xxx`
 - 禁止提交：`.env`、任何 API Key、`logs/`、本地数据库文件
+
+## 七、实施版启动与验收
+
+### 7.1 Docker Compose 启动
+
+```bash
+cp .env.example .env          # 按需修改密钥；.env 已在 .gitignore 中
+docker compose build
+docker compose up -d
+docker compose ps             # web / worker / redis / db 四个服务
+```
+
+- 访问地址：`http://localhost:8000`（`WEB_PORT` 可改）
+- 健康检查：`GET /healthz` 返回 `db`、`redis` 与 `audit_failures`
+- 首次启动由 `web` 容器执行 `alembic upgrade head` 与 `python -m app.seed`；`worker` 不重复迁移
+
+### 7.2 测试账号（seed 写入，密码统一为 `Campus@123`）
+
+| 账号 | 角色 | 班级 | 用途 |
+| --- | --- | --- | --- |
+| `teacher_a` | 教师 | 高一（3）班 `cls-a` | 教师端 5 页、改分、审计 |
+| `student_a1` | 学生 | `cls-a` | 本班学生甲（含一条已批改数学提交） |
+| `student_a2` | 学生 | `cls-a` | 本班学生乙（个人数据隔离对照） |
+| `student_b1` | 学生 | 高一（5）班 `cls-b` | 外班学生（跨班 404 对照） |
+
+登录页为正常用户名 / 密码表单，登录成功写入 HttpOnly JWT Cookie，按角色渲染 5 / 7 项侧栏。
+
+### 7.3 本地直跑（不依赖 Docker）
+
+```bash
+python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
+set CELERY_ALWAYS_EAGER=1      # PowerShell: $env:CELERY_ALWAYS_EAGER="1"
+.venv\Scripts\python -m app.seed
+.venv\Scripts\python -m flask --app app.wsgi run -p 8000
+.venv\Scripts\python -m pytest apitest -q
+```
+
+本地无 Redis 时，`CELERY_ALWAYS_EAGER=1` 会在请求内同步执行批改，便于走查；Docker 环境使用 `worker` 异步执行。
+
+### 7.4 关键配置项（`.env`）
+
+- `SECRET_KEY` / `JWT_SECRET`：会话与 JWT 签名密钥，部署时必须替换
+- `DATABASE_URL`：默认 Compose 内 `postgresql+psycopg2://...`，本地可留空使用 SQLite
+- `REDIS_URL`：Celery broker / backend
+- `AI_GATEWAY_BASE_URL`、`AI_GATEWAY_API_KEY`、`AI_GATEWAY_MODEL`：留空时启用本地演示生成器，链路完整可走，来源仍只引用真实检索命中
+- `AI_TIMEOUT_SECONDS`：网关超时，默认 90 秒
+- `PASS_SCORE`：判错及格线，默认 60
+- `COOKIE_SECURE`：HTTPS 部署时设为 1
+- `WEB_PORT`：宿主端口，默认 8000
+
+### 7.5 验收命令
+
+```bash
+python scripts/check_compliance.py --base-url http://localhost:8000
+```
+
+脚本按 5 条合规检查点输出 `PASS / FAIL / UNEXECUTED`；未执行项不会被标记为通过。
+
+### 7.6 已知限制
+
+- 词法检索为轻量实现（中文单字 + 双字 bigram + 英文/数字 token），不是向量检索；未命中时明确返回空来源，不伪造引用。
+- 未配置 AI 网关时使用本地演示生成器，分数与评语为固定规则结果，仅用于链路演示。
+- 改分与判错操作写入 `audit_logs` 的 `action`（`grade_override` / `mark_wrong` / `undo_mark_wrong`），技能调用写入 `skill` 字段；教师审计页默认流水可查到上述操作。
+- Docker 基础镜像需可访问镜像仓库；网络受限时可先从可用镜像源预拉取 `python:3.11-slim`、`postgres:16-alpine`、`redis:7-alpine` 并打上同名 tag。
+- `locust` 压测（任务 9.3）尚未执行，保持未勾选。
+
