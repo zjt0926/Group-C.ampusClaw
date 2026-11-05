@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}助手对话 · 学生 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>助手对话</h1>
+    <p>选择学科助手后开始对话；技能开关由教师在「助手配置」中控制。</p>
+  </div>
+
+  <div class="subject-tabs" id="chat-tabs">
+    {% for subject in subjects %}
+    <button class="subject-tab {% if loop.first %}active{% endif %}" data-subject="{{ subject }}">
+      <span class="subject-tab-ic">{{ subject_icons[subject] }}</span>{{ subject }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="chat-skillbar" id="chat-skillbar">
+    <span class="muted small">当前技能状态：</span>
+    <span class="badge badge-neutral" id="chat-skill-status">加载中…</span>
+  </div>
+
+  <div class="chat-window">
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+      <textarea class="textarea" id="chat-input" rows="2" placeholder="输入你的问题，Enter 发送，Shift+Enter 换行"></textarea>
+      <button class="btn btn-primary" id="chat-send">发送</button>
+    </div>
+  </div>
+  <div class="muted small mt-8">回答内容由课程 AI 网关生成；未命中讲义时会明确说明，不伪造来源。</div>
+</div>
+{% endblock %}

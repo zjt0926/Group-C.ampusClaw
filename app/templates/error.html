@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ status }} · CampusClaw</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+</head>
+<body class="login-body">
+<main class="error-page">
+  <div class="brand-mark">🎓</div>
+  <h1>{{ status }}</h1>
+  <p>{{ message }}</p>
+  <a class="btn btn-primary" href="/">返回首页</a>
+  <a class="btn btn-outline" href="/login">回到登录</a>
+</main>
+</body>
+</html>

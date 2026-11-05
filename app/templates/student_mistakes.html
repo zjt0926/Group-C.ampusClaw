@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}错题 · 学生 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>错题</h1>
+    <p>判错的题目会进入这里；请助手讲解按「错因分析 / 相关知识点 / 修正建议」三段输出，默认不给最终答案。</p>
+  </div>
+
+  <div class="subject-tabs" id="mistake-tabs">
+    {% for subject in subjects %}
+    <button class="subject-tab {% if loop.first %}active{% endif %}" data-subject="{{ subject }}">
+      <span class="subject-tab-ic">{{ subject_icons[subject] }}</span>{{ subject }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div id="wrong-list" class="list-stack"></div>
+  <div id="wrong-empty" class="empty hidden">
+    <div class="empty-icon">🌟</div>
+    <div class="empty-title">暂无错题</div>
+    <div class="empty-desc">提交作业后被判错的题目会出现在这里。继续保持！</div>
+  </div>
+</div>
+{% endblock %}

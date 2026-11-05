@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}讲义管理 · 教师 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head row between wrap gap-12">
+    <div>
+      <h1>讲义管理</h1>
+      <p>选择学科后上传讲义并入库；每一行正文会切分为一个知识库片段。</p>
+    </div>
+    <button class="btn btn-primary" id="material-upload-open">上传讲义</button>
+  </div>
+
+  <div class="subject-tabs" id="material-tabs">
+    {% for subject in subjects %}
+    <button class="subject-tab {% if loop.first %}active{% endif %}" data-subject="{{ subject }}">
+      <span class="subject-tab-ic">{{ subject_icons[subject] }}</span>{{ subject }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="card card-pad">
+    <div class="section-title">本班讲义</div>
+    <div id="material-list" class="list-stack"></div>
+    <div class="muted small mt-12">学生只能读取本班讲义，跨班详情一律 404。</div>
+  </div>
+</div>
+
+<div class="modal-mask hidden" id="material-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>上传讲义并入库</h3>
+      <button class="modal-x" data-close="material-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="material-form">
+        <label class="field"><span>学科</span><input class="input" id="material-subject" disabled /></label>
+        <label class="field"><span>讲义标题</span><input class="input" id="material-title" placeholder="例如：一元二次方程与求根公式" maxlength="200" /></label>
+        <label class="field"><span>正文（每段一行，将切分为知识库片段）</span><textarea class="textarea" id="material-content" rows="9" placeholder="每行一条知识点，入库后每行成为一个切片"></textarea></label>
+        <div class="notice notice-info">演示环境只接收纯文本，不做 PDF / Word / 图片解析。</div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close="material-modal">取消</button>
+      <button class="btn btn-primary" id="material-save">上传并入库</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

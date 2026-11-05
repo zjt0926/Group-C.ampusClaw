@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}本班首页 · 教师 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>本班首页</h1>
+    <p>{{ current_user.school_class.name }} · 你只能管理本班数据，跨班访问一律 404。</p>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card card-pad stat">
+      <div class="stat-value stat-brand" id="stat-students">—</div>
+      <div class="stat-label">本班学生数</div>
+      <div class="stat-hint">账号与本班绑定</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value" id="stat-assignments">—</div>
+      <div class="stat-label">作业总数</div>
+      <div class="stat-hint">五个学科</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-info" id="stat-submissions">—</div>
+      <div class="stat-label">提交总数</div>
+      <div class="stat-hint">含处理中与失败</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-warn" id="stat-pending">—</div>
+      <div class="stat-label">待批改</div>
+      <div class="stat-hint">排队中 + 批改中</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 mt-24">
+    <div class="card card-pad">
+      <div class="section-title">班级各学科掌握度</div>
+      <div id="mastery-bars" class="barlist"></div>
+      <div class="muted small mt-12">口径：已批改提交取教师终评优先，否则取 AI 初评。</div>
+    </div>
+    <div class="card card-pad">
+      <div class="section-title">主路径导航</div>
+      <div class="quick-list">
+        <a class="quick-link" href="/teacher/lectures"><span class="quick-ic">📚</span><span><strong>上传讲义并入库</strong><small>选择学科后上传讲义并切分为知识库片段</small></span></a>
+        <a class="quick-link" href="/teacher/assistant"><span class="quick-ic">🛠️</span><span><strong>编辑提示词、开关技能</strong><small>学生端为只读，技能开关由教师控制</small></span></a>
+        <a class="quick-link" href="/teacher/homework"><span class="quick-ic">📝</span><span><strong>查看提交并修改分数</strong><small>教师终评覆盖 AI 初评，AI 原始结果保留</small></span></a>
+        <a class="quick-link" href="/teacher/audit"><span class="quick-ic">📊</span><span><strong>查看技能调用与失败率</strong><small>审计覆盖全部 /api/* 与技能调用</small></span></a>
+      </div>
+      <div class="muted small mt-12">技能调用总数：<strong id="stat-skill-calls">—</strong></div>
+    </div>
+  </div>
+
+  <div class="card card-pad mt-24">
+    <div class="section-title">最近批改</div>
+    <div id="recent-list" class="list-stack"></div>
+  </div>
+</div>
+{% endblock %}

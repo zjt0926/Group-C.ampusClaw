@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}助手配置 · 教师 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>助手配置</h1>
+    <p>管理技能提示词、启用开关与 MCP 服务器；学生端只能查看技能名称与触发条件。</p>
+  </div>
+
+  <div class="card card-pad">
+    <div class="section-title">AI 网关配置</div>
+    <div class="row between wrap gap-12">
+      <div>
+        <div class="muted small">API Key（仅服务端保管，前端只显示掩码）</div>
+        <div class="apikey" id="api-key-value">—</div>
+      </div>
+      <div class="row gap-8">
+        <span class="badge badge-brand" id="ai-mode">—</span>
+        <span class="badge badge-neutral">密钥不进前端与仓库</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-pad mt-24">
+    <div class="section-title">技能与智能体</div>
+    <div id="skill-list" class="list-stack"></div>
+    <div class="muted small mt-12">必做技能：作业批改不可停用；解题引导与错题讲解可独立开关。</div>
+  </div>
+
+  <div class="card card-pad mt-24">
+    <div class="section-title row between wrap gap-12">
+      <span>MCP 服务器</span>
+      <button class="btn btn-outline btn-sm" id="mcp-add-open">添加服务器</button>
+    </div>
+    <div id="mcp-grid" class="mcp-grid"></div>
+  </div>
+</div>
+
+<div class="modal-mask hidden" id="skill-modal">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h3 id="skill-modal-title">编辑技能</h3>
+      <button class="modal-x" data-close="skill-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="skill-key" />
+      <div class="notice notice-info" id="skill-required-tip"></div>
+      <label class="field"><span>技能名称</span><input class="input" id="skill-name" disabled /></label>
+      <label class="field"><span>触发条件</span><input class="input" id="skill-trigger" maxlength="200" /></label>
+      <label class="field"><span>行为说明</span><input class="input" id="skill-behavior" maxlength="300" /></label>
+      <label class="field"><span>提示词（仅教师可见）</span><textarea class="textarea" id="skill-prompt" rows="8"></textarea></label>
+      <label class="row gap-8"><input type="checkbox" id="skill-enabled" /><span>启用该技能</span></label>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close="skill-modal">取消</button>
+      <button class="btn btn-primary" id="skill-save">保存提示词</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask hidden" id="mcp-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>添加 MCP 服务器</h3>
+      <button class="modal-x" data-close="mcp-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <label class="field"><span>服务器名称</span><input class="input" id="mcp-name" placeholder="例如：几何绘图服务" maxlength="80" /></label>
+      <label class="field"><span>服务器地址</span><input class="input" id="mcp-url" placeholder="mcp://tools/geometry" maxlength="200" /></label>
+      <div class="notice notice-info">添加后将模拟一次握手并自动发现工具，工具可在技能中绑定。</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close="mcp-modal">取消</button>
+      <button class="btn btn-primary" id="mcp-save">添加并连接</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

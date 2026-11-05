@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}学情分析 · 学生 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>学情分析</h1>
+    <p>所有数字来自本班、本人维度的数据库聚合，可逐项与数据库行数对账。</p>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card card-pad stat">
+      <div class="stat-value stat-info" id="stat-questions">—</div>
+      <div class="stat-label">累计提问</div>
+      <div class="stat-hint">学科助手 role=user 消息</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value" id="stat-submissions">—</div>
+      <div class="stat-label">作业提交</div>
+      <div class="stat-hint">含失败提交</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-brand" id="stat-correct">—</div>
+      <div class="stat-label">作业正确率</div>
+      <div class="stat-hint">AI 分 ≥ 60 / 已批改</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-danger" id="stat-wrong">—</div>
+      <div class="stat-label">错题累计</div>
+      <div class="stat-hint">仅本人数据</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 mt-24">
+    <div class="card card-pad">
+      <div class="section-title">各学科掌握度</div>
+      <div class="analytics-radar">
+        <div id="radar-container" class="radar-container"></div>
+        <div id="mastery-legend" class="mastery-legend"></div>
+      </div>
+      <div class="muted small mt-12">无数据学科在雷达图与图例中留空，不补 0。</div>
+    </div>
+    <div class="card card-pad">
+      <div class="section-title">近期成绩趋势</div>
+      <div id="trend-container" class="trend-container"></div>
+      <div id="trend-empty" class="empty hidden">
+        <div class="empty-icon">📈</div>
+        <div class="empty-title">暂无已批改提交</div>
+        <div class="empty-desc">完成作业批改后这里会出现成绩曲线。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-pad mt-24">
+    <div class="section-title">各学科提交热力</div>
+    <div id="heat-container"></div>
+    <div id="heat-empty" class="empty hidden">
+      <div class="empty-icon">🗓️</div>
+      <div class="empty-title">暂无提交数据</div>
+    </div>
+  </div>
+
+  <div class="profile-card card card-pad mt-24">
+    <div class="section-title">学习画像</div>
+    <div id="profile-content"></div>
+    <div id="profile-empty" class="empty hidden">
+      <div class="empty-icon">🧭</div>
+      <div class="empty-title">数据不足，暂不生成画像</div>
+      <div class="empty-desc">已批改提交达到 3 次后生成学习画像。</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

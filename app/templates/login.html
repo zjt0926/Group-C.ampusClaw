@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 · CampusClaw 智能教学平台</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+</head>
+<body class="login-body">
+<div class="login">
+  <div class="login-hero">
+    <span class="login-badge">高一班级 · AI 学科助手</span>
+    <h1>CampusClaw<br />智能教学平台</h1>
+    <p class="login-sub">
+      教师发布讲义与作业、审核 AI 批改；学生检索讲义、与学科助手对话、
+      交作业获得异步批改、积累错题并查看学情画像。
+    </p>
+    <div class="login-features">
+      <span>🏫 班级隔离 · 跨班一律 404</span>
+      <span>📚 讲义检索 · 来源可定位</span>
+      <span>💬 流式对话 · 技能与工具痕迹</span>
+      <span>📝 异步批改 · 教师终评留痕</span>
+    </div>
+  </div>
+
+  <div class="login-panel">
+    <div class="login-panel-title">账号登录</div>
+    <p class="login-hint">请输入学校分配的账号与密码进入本班学习空间。</p>
+    <form id="login-form" class="login-form" autocomplete="on">
+      <label class="field">
+        <span>账号</span>
+        <input class="input" id="login-username" name="username" type="text" placeholder="请输入账号" autocomplete="username" required />
+      </label>
+      <label class="field">
+        <span>密码</span>
+        <input class="input" id="login-password" name="password" type="password" placeholder="请输入密码" autocomplete="current-password" required />
+      </label>
+      <div id="login-error" class="notice notice-danger hidden"></div>
+      <button class="btn btn-primary btn-block" id="login-submit" type="submit">登录</button>
+    </form>
+    <div class="login-foot">
+      <p>演示账号（密码均为 Campus@123）</p>
+      <p class="demo-accounts">教师：teacher_a ｜ 本班学生：student_a1 / student_a2 ｜ 外班学生：student_b1</p>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  const form = document.getElementById('login-form');
+  const errorBox = document.getElementById('login-error');
+  const submit = document.getElementById('login-submit');
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    errorBox.classList.add('hidden');
+    submit.disabled = true;
+    submit.textContent = '登录中…';
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          username: document.getElementById('login-username').value.trim(),
+          password: document.getElementById('login-password').value
+        })
+      });
+      const data = await response.json().catch(function () { return {}; });
+      if (!response.ok) {
+        throw new Error(data.error || '登录失败');
+      }
+      const target = data.user.role === 'teacher' ? '/teacher' : '/student';
+      const nextPath = '{{ next_path }}';
+      window.location.href = nextPath && nextPath.startsWith('/') ? nextPath : target;
+    } catch (error) {
+      errorBox.textContent = error.message || '登录失败，请稍后重试';
+      errorBox.classList.remove('hidden');
+      submit.disabled = false;
+      submit.textContent = '登录';
+    }
+  });
+})();
+</script>
+</body>
+</html>

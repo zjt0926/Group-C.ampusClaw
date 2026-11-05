@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}交作业 · 学生 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>交作业</h1>
+    <p>提交后作业进入异步批改队列：状态会从「排队中」到「批改中」再到「已完成」。</p>
+  </div>
+
+  <div class="subject-tabs" id="submit-tabs">
+    {% for subject in subjects %}
+    <button class="subject-tab {% if loop.first %}active{% endif %}" data-subject="{{ subject }}">
+      <span class="subject-tab-ic">{{ subject_icons[subject] }}</span>{{ subject }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div id="assignment-list" class="list-stack"></div>
+  <div id="submit-empty" class="empty hidden">
+    <div class="empty-icon">📭</div>
+    <div class="empty-title">当前学科暂无作业</div>
+    <div class="empty-desc">教师布置后会出现在这里。</div>
+  </div>
+</div>
+
+<div class="modal-mask hidden" id="submit-modal">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h3 id="submit-modal-title">提交作业</h3>
+      <button class="modal-x" data-close="submit-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="submit-assignment-id" />
+      <div class="graded-answer" id="submit-assignment-desc"></div>
+      <label class="field mt-12"><span>在此输入你的作答（纯文本，1—5000 字符）</span>
+        <textarea class="textarea" id="submit-content" rows="8" placeholder="写出你的推导过程与结论"></textarea>
+      </label>
+      <div class="notice notice-danger hidden" id="submit-error"></div>
+      <div class="notice notice-info">提交采用幂等键：双击或网络重试不会产生重复提交。</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close="submit-modal">取消</button>
+      <button class="btn btn-primary" id="submit-confirm">提交作答</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask hidden" id="source-modal">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h3 id="source-modal-title">讲义来源</h3>
+      <button class="modal-x" data-close="source-modal">✕</button>
+    </div>
+    <div class="modal-body" id="source-modal-body"></div>
+  </div>
+</div>
+{% endblock %}

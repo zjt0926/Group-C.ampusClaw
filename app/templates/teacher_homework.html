@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}作业与改分 · 教师 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head row between wrap gap-12">
+    <div>
+      <h1>作业与改分</h1>
+      <p>查看本班提交、覆盖终评；AI 初评与教师终评分列保存，改分全程留痕。</p>
+    </div>
+    <button class="btn btn-primary" id="assignment-open">布置作业</button>
+  </div>
+
+  <div class="subject-tabs" id="submission-tabs">
+    {% for subject in subjects %}
+    <button class="subject-tab {% if loop.first %}active{% endif %}" data-subject="{{ subject }}">
+      <span class="subject-tab-ic">{{ subject_icons[subject] }}</span>{{ subject }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="card card-pad">
+    <div class="section-title row between wrap gap-8">
+      <span>本班提交</span>
+      <span class="muted small" id="submission-total"></span>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>学生</th><th>作答</th><th>状态</th><th>AI 初评</th><th>教师终评</th><th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="submission-table-body"></tbody>
+      </table>
+    </div>
+    <div id="submission-empty" class="empty hidden">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">本班该学科暂无提交</div>
+      <div class="empty-desc">学生提交后会自动进入异步批改队列。</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask hidden" id="grade-modal">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h3>教师改分</h3>
+      <button class="modal-x" data-close="grade-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="grade-submission-id" />
+      <div class="notice notice-info" id="grade-status-tip"></div>
+      <div class="muted small">学生作答</div>
+      <div class="graded-answer" id="grade-content"></div>
+      <div class="mt-12"><span class="badge badge-brand">AI 初评</span> <strong id="grade-ai-score"></strong></div>
+      <div class="graded-comment mt-8" id="grade-ai-comment"></div>
+      <div class="muted small mt-8" id="grade-evidence"></div>
+      <div class="divider"></div>
+      <label class="field"><span>终评分数（0—100 整数）</span><input class="input" id="grade-score" type="number" min="0" max="100" step="1" /></label>
+      <label class="field"><span>终评评语（不超过 500 字符）</span><textarea class="textarea" id="grade-comment" rows="4"></textarea></label>
+      <div class="notice notice-danger hidden" id="grade-error"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close="grade-modal">取消</button>
+      <button class="btn btn-danger" id="grade-mark-wrong">标记为错</button>
+      <button class="btn btn-outline" id="grade-undo-wrong">撤销判错</button>
+      <button class="btn btn-primary" id="grade-save">保存终评</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask hidden" id="assignment-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>布置作业</h3>
+      <button class="modal-x" data-close="assignment-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <label class="field"><span>学科</span>
+        <select class="select" id="assignment-subject">
+          {% for subject in subjects %}<option value="{{ subject }}">{{ subject }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="field"><span>标题</span><input class="input" id="assignment-title" maxlength="200" placeholder="例如：用求根公式解 x²-5x+6=0" /></label>
+      <label class="field"><span>题目描述</span><textarea class="textarea" id="assignment-description" rows="4"></textarea></label>
+      <label class="field"><span>截止时间</span><input class="input" id="assignment-deadline" type="datetime-local" /></label>
+      <div class="notice notice-danger hidden" id="assignment-error"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close="assignment-modal">取消</button>
+      <button class="btn btn-primary" id="assignment-save">发布作业</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

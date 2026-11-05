@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}审计与统计 · 教师 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>审计与统计</h1>
+    <p>记录本班的技能调用与关键操作，用于追溯与观测；统计强制按班级隔离。</p>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card card-pad stat">
+      <div class="stat-value" id="stat-total">—</div>
+      <div class="stat-label">调用总数</div>
+      <div class="stat-hint">全部 /api/* 与技能调用</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-danger" id="stat-failures">—</div>
+      <div class="stat-label">失败 / 超时</div>
+      <div class="stat-hint">4xx 与 5xx 同样留痕</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-info" id="stat-tokens">—</div>
+      <div class="stat-label">总用量 tokens</div>
+      <div class="stat-hint">无用量数据记为 null</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-brand" id="stat-skills">—</div>
+      <div class="stat-label">技能种类</div>
+      <div class="stat-hint">四个技能分别聚合</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 mt-24">
+    <div class="card card-pad">
+      <div class="section-title">按技能统计</div>
+      <table class="table">
+        <thead><tr><th>技能</th><th>调用次数</th><th>失败率</th><th>总 token</th></tr></thead>
+        <tbody id="skill-summary-body"></tbody>
+      </table>
+      <div id="skill-summary-empty" class="empty hidden">
+        <div class="empty-icon">📊</div>
+        <div class="empty-title">暂无技能调用</div>
+      </div>
+    </div>
+
+    <div class="card card-pad">
+      <div class="section-title">合规检查点</div>
+      <ol class="compliance-list">
+        <li><span class="compliance-no">01</span><span>每条技能调用均写入审计（含技能标识、参数摘要、结果、耗时）</span></li>
+        <li><span class="compliance-no">02</span><span>API Key 不进入前端与代码仓库，仅服务端环境变量读取</span></li>
+        <li><span class="compliance-no">03</span><span>未命中知识库不伪造来源，检索为空时明确说明</span></li>
+        <li><span class="compliance-no">04</span><span>班级与个人数据隔离，跨班一律 404，同学之间互不可见</span></li>
+        <li><span class="compliance-no">05</span><span>学生技能只读，无法修改提示词、开关与 MCP 配置</span></li>
+      </ol>
+      <div class="muted small mt-12">逐条点核方式见仓库 docs/compliance-check.md 与 scripts/check_compliance.py。</div>
+    </div>
+  </div>
+
+  <div class="card card-pad mt-24">
+    <div class="section-title">操作日志</div>
+    <div class="filter-bar">
+      <select class="select select-sm" id="audit-filter-skill"><option value="">全部技能</option></select>
+      <select class="select select-sm" id="audit-filter-status">
+        <option value="">全部状态</option>
+        <option value="success">success</option>
+        <option value="failed">failed</option>
+        <option value="error">error</option>
+        <option value="timeout">timeout</option>
+      </select>
+      <button class="btn btn-outline btn-sm" id="audit-refresh">刷新</button>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>时间</th><th>用户</th><th>操作</th><th>技能</th><th>状态</th><th>耗时</th><th>参数摘要</th></tr>
+        </thead>
+        <tbody id="audit-table-body"></tbody>
+      </table>
+    </div>
+    <div id="audit-empty" class="empty hidden">
+      <div class="empty-icon">🗂️</div>
+      <div class="empty-title">暂无日志</div>
+    </div>
+    <div class="pager">
+      <button class="btn btn-outline btn-sm" id="audit-prev">上一页</button>
+      <span class="muted small" id="audit-page-info">第 1 页</span>
+      <button class="btn btn-outline btn-sm" id="audit-next">下一页</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

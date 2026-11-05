@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}本班首页 · 学生 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>你好，{{ current_user.display_name }}</h1>
+    <p>这里是 {{ current_user.school_class.name }} 的学习空间，所有内容仅限本班可见。</p>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card card-pad stat">
+      <div class="stat-value stat-warn" id="stat-unsubmitted">—</div>
+      <div class="stat-label">待提交作业</div>
+      <div class="stat-hint">截止前可提交</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-brand" id="stat-graded">—</div>
+      <div class="stat-label">已批改提交</div>
+      <div class="stat-hint">AI 初评 / 教师终评</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-danger" id="stat-wrong">—</div>
+      <div class="stat-label">我的错题</div>
+      <div class="stat-hint">仅本人可见</div>
+    </div>
+    <div class="card card-pad stat">
+      <div class="stat-value stat-info" id="stat-questions">—</div>
+      <div class="stat-label">累计提问</div>
+      <div class="stat-hint">学科助手对话</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 mt-24">
+    <div class="card card-pad">
+      <div class="section-title">进行中作业</div>
+      <div id="upcoming-list" class="list-stack"></div>
+    </div>
+    <div class="card card-pad">
+      <div class="section-title">快速开始</div>
+      <div class="quick-list">
+        <a class="quick-link" href="/student/knowledge"><span class="quick-ic">🔍</span><span><strong>检索讲义</strong><small>在本班知识库中查找带来源的资料</small></span></a>
+        <a class="quick-link" href="/student/chat"><span class="quick-ic">💬</span><span><strong>向助手提问</strong><small>流式回答，引用讲义来源，展示执行过程</small></span></a>
+        <a class="quick-link" href="/student/submit"><span class="quick-ic">✍️</span><span><strong>提交作业</strong><small>提交后由助手异步批改并给出评语</small></span></a>
+        <a class="quick-link" href="/student/mistakes"><span class="quick-ic">📕</span><span><strong>查看错题</strong><small>逐题剖析错因并给出巩固建议</small></span></a>
+      </div>
+      <div class="notice notice-info mt-16">演示提示：先在「助手对话」体验解题引导，再到「交作业」提交并观察异步批改，最后到「错题」查看讲解。</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

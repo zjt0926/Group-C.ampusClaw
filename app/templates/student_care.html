@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}关怀式对话 · 学生 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>关怀式对话</h1>
+    <p>这里不聊学科题目，只关注你的情绪与学习状态。内容仅本人可见，教师也看不到对话正文。</p>
+  </div>
+
+  <div class="card card-pad">
+    <div class="section-title">可获得的求助渠道</div>
+    <ul class="help-list" id="help-channels">
+      <li>班主任：可在班级群里联系</li>
+      <li>学校心理老师：工作日到心理辅导室</li>
+      <li>心理援助热线：12356</li>
+      <li>紧急情况：120 / 110</li>
+    </ul>
+    <div class="notice notice-warn mt-12">如果你正经历强烈的痛苦或有伤害自己的想法，请立刻告诉身边信任的人，或拨打上面的求助电话。</div>
+  </div>
+
+  <div class="notice notice-danger hidden mt-16" id="care-disabled">该能力已被教师关闭，暂时无法发起新的对话。</div>
+
+  <div class="chat-window mt-16">
+    <div class="chat-messages" id="care-messages"></div>
+    <div class="chat-input">
+      <textarea class="textarea" id="care-input" rows="2" placeholder="说说今天的状态，例如：这次又考砸了，怎么学都没用"></textarea>
+      <button class="btn btn-primary" id="care-send">发送</button>
+    </div>
+  </div>
+  <div class="muted small mt-8">风险关键词会触发固定安全提示，不依赖模型输出。</div>
+</div>
+{% endblock %}

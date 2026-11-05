@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}讲义与检索 · 学生 · CampusClaw{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="page-head">
+    <h1>讲义与检索</h1>
+    <p>在本班知识库中查找带来源的资料，结果会标注讲义名与位置。</p>
+  </div>
+
+  <div class="subject-tabs" id="knowledge-tabs">
+    {% for subject in subjects %}
+    <button class="subject-tab {% if loop.first %}active{% endif %}" data-subject="{{ subject }}">
+      <span class="subject-tab-ic">{{ subject_icons[subject] }}</span>{{ subject }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="card card-pad">
+    <div class="search-bar">
+      <input class="input" id="knowledge-search-input" placeholder="例如：求根公式 / 判别式 / 被动语态" />
+      <button class="btn btn-primary" id="knowledge-search-btn">检索</button>
+    </div>
+    <div id="search-results" class="list-stack mt-16"></div>
+    <div id="search-empty" class="empty hidden">
+      <div class="empty-icon">🔎</div>
+      <div class="empty-title">未命中本班知识库</div>
+      <div class="empty-desc">助手不会凭空编造来源或结论，建议补充关键词或让老师上传相关讲义。</div>
+    </div>
+  </div>
+
+  <div class="card card-pad mt-24">
+    <div class="section-title row between wrap gap-8">
+      <span>本班讲义</span>
+      <span class="muted small" id="material-total"></span>
+    </div>
+    <div id="knowledge-material-list" class="list-stack"></div>
+    <div id="knowledge-material-empty" class="empty hidden">
+      <div class="empty-icon">📚</div>
+      <div class="empty-title">该学科暂无讲义</div>
+      <div class="empty-desc">等待教师上传后即可检索。</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask hidden" id="material-view-modal">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h3 id="material-view-title">讲义详情</h3>
+      <button class="modal-x" data-close="material-view-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="material-view-body"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
