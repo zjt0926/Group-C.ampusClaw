@@ -1,6 +1,6 @@
 # 高风险三查 · 事务 · CampusClaw
 
-> 记录日期：2026-11-06　环境：本机 Docker（`group-campusclaw-web-1 / worker-1 / db-1 / redis-1` 四容器健康），http://127.0.0.1:8000　代码提交：19b9327
+> 记录日期：2026-11-06　环境：本机 Docker（`group-campusclaw-web-1 / worker-1 / db-1 / redis-1` 四容器健康），http://127.0.0.1:8000　代码提交：ce38742
 
 ## 一、用什么手段查
 

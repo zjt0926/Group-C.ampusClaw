@@ -2,7 +2,7 @@
 
 > 第三次验证 · 资产类基线
 > 文件：`reports/security-baseline.md`　记录日期：2026-11-06
-> 提交号：`d777778`　环境：Docker Compose 四容器（web / worker / db / redis），http://localhost:8000
+> 提交号：`b4ad47b`　环境：Docker Compose 四容器（web / worker / db / redis），http://localhost:8000
 > 扫描对象：**全量提交历史 + 前端产物 + 运行日志**；依赖审计对象：**web 容器内实际运行环境**
 
 ---

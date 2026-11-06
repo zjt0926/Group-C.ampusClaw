@@ -2,7 +2,7 @@
 
 > 第二次验证 · 跨班一条展开整理
 > 文件：`reports/risk-authz.md`　记录日期：2026-11-06
-> 环境：Docker Compose 四容器（web / worker / db / redis），提交号 `3288cb6`，地址 http://localhost:8000
+> 环境：Docker Compose 四容器（web / worker / db / redis），提交号 `50b59a0`，地址 http://localhost:8000
 > 账号：student_a1（cls-a）、student_b1（cls-b），密码统一 `Campus@123`
 
 ## 一、用什么手段查

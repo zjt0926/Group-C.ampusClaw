@@ -1,6 +1,6 @@
 # 交叉评审记录 · CampusClaw
 
-> 评审人：zjt0926　记录日期：2026-11-06　被评审记录：`reports/security-precheck.md`（提交 3288cb6）
+> 评审人：zjt0926　记录日期：2026-11-06　被评审记录：`reports/security-precheck.md`（提交 50b59a0）
 > 复现环境：本机 Docker 部署，http://127.0.0.1:8000，容器 `group-campusclaw-web-1` 等四服务健康
 
 ## 一、评审手段
