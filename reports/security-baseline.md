@@ -170,7 +170,7 @@ Found 55 known vulnerabilities in 8 packages
 
 ## 三、复跑入口
 
-本仓库未内置 `make`，两条检测按下面两段命令分别复跑（Linux / macOS 原样执行）：
+仓库已提供一键入口：`make check-security`（等价 `sh scripts/check_security.sh`），覆盖 SEC-05 三段扫描与 SEC-06 依赖审计；分项为 `make check-secrets` / `make audit-deps`，README 7.5 已注明。底层命令仍如下（Linux / macOS 原样执行）：
 
 ```bash
 # SEC-05 密钥扫描：提交历史 / 前端产物 / 运行日志
@@ -184,7 +184,35 @@ docker exec group-campusclaw-web-1 pip install --quiet pip-audit
 docker exec group-campusclaw-web-1 pip-audit
 ```
 
-- 三段扫描应全部**无输出**；依赖审计应输出上表同样 55 条、末行 `Found 55 known vulnerabilities in 8 packages`。
-- 仓库现有的合规检查入口是 `python scripts/check_compliance.py --base-url http://localhost:8000`（README 7.5），只覆盖合规五条，不含密钥扫描与依赖审计，故本次单独记录。
+一键入口实测输出（2026-11-06，本机已安装 GNU Make 4.4.1）：
 
-> 注（Windows 本机）：上述命令以等价 PowerShell 命令执行（`git grep` 逐提交循环、`Select-String` 扫描目录、`docker logs | Select-String`），三段命中均为 0；`docker logs` 读取 stdin 时需 `2>&1`，否则 stderr 不参与扫描。
+```
+$ make --version
+GNU Make 4.4.1
+Built for Windows32
+
+$ make check-secrets
+扫描提交历史 …… 通过（0 命中）
+扫描前端产物 …… 通过（0 命中）
+扫描运行日志 …… 通过（0 命中）
+（退出码 0）
+
+$ make check-security
+扫描提交历史 …… 通过（0 命中）
+扫描前端产物 …… 通过（0 命中）
+扫描运行日志 …… 通过（0 命中）
+依赖审计（group-campusclaw-web-1 / pip-audit）……
+Found 55 known vulnerabilities in 8 packages
+Name          Version ID                  Fix Versions
+------------- ------- ------------------- ------------
+（与第二节相同的 55 条）
+依赖审计 …… 发现已知漏洞（退出码 1），基线见 reports/security-baseline.md
+make: *** [Makefile:12: audit-deps] Error 1
+（退出码 2）
+```
+
+- 三段扫描应全部**无输出**；依赖审计应输出上表同样 55 条、末行 `Found 55 known vulnerabilities in 8 packages`。
+- 依赖审计发现漏洞时脚本按非 0 退出，与本节红项一致；`check_compliance.py`（README 7.5）只覆盖合规五条，不含密钥扫描与依赖审计，故两项单独记录。
+- 容器未启动时依赖审计直接报「未执行」，不会把没跑过的检查记为通过。
+
+> 注（Windows 本机）：GNU Make 4.4.1 通过 `winget install --id ezwinports.make -e` 安装，`make check-security` 已在真实 make 下实跑（输出见上）。本机 PATH 过长时，子进程中的 PATH 会被截断导致找不到 `docker`，脚本已按 Docker Desktop 常见安装位置兜底后再调用。`docker logs` 读取 stdin 时需 `2>&1`，否则 stderr 不参与扫描。

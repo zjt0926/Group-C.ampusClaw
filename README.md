@@ -133,9 +133,12 @@ set CELERY_ALWAYS_EAGER=1      # PowerShell: $env:CELERY_ALWAYS_EAGER="1"
 
 ```bash
 python scripts/check_compliance.py --base-url http://localhost:8000
+make check-security
 ```
 
-脚本按 5 条合规检查点输出 `PASS / FAIL / UNEXECUTED`；未执行项不会被标记为通过。
+`check_compliance.py` 按 5 条合规检查点输出 `PASS / FAIL / UNEXECUTED`；未执行项不会被标记为通过。
+
+`make check-security` 一键复查安全基线（SEC-05 密钥扫描 + SEC-06 依赖审计），分项为 `make check-secrets` / `make audit-deps`。无 GNU Make 时等价执行 `sh scripts/check_security.sh`；依赖审计要求容器已 `docker compose up -d`，发现已知漏洞时退出码非 0。
 
 ### 7.6 已知限制
 
