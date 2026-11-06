@@ -1,6 +1,6 @@
 # 交叉评审记录 · CampusClaw
 
-> 评审人：C 组成员（独立复现人）　记录日期：2026-11-06　被评审记录：`reports/security-precheck.md`（提交 50b59a0）
+> 评审人 王珅荣　记录日期：2026-11-06　被评审记录：`reports/security-precheck.md`（提交 50b59a0）
 > 复现环境：本机直接运行（`.venv` + SQLite + `CELERY_ALWAYS_EAGER=1`），http://127.0.0.1:8010，仓库提交 ec6b817
 > 环境说明：本次复现时本机 Docker 引擎未运行，故改用 README 7.3 的本地直跑方式；除启动方式外，代码、种子数据与接口行为均与 Docker 部署一致。`/healthz` 返回 `redis:false`（本地无 Redis，批改在请求内同步完成）。
 
